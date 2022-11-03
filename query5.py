@@ -153,7 +153,7 @@ if __name__ == '__main__':
     print_header("Exporting the output into csv file")
     sorted_buyer_data.to_csv('sorted_buyer_dataset.csv')
 
-    runtimes = gather_runtimes(1)
+    runtimes = gather_runtimes(100)
     input_intervals = np.arange(1000, 93000, 1000)
 
     plt.plot(input_intervals, runtimes)
