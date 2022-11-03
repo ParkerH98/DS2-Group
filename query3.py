@@ -2,7 +2,8 @@ import pandas as pd
 import itertools 
 import csv
 import time
-  
+import math
+from math import nan
   
 def mergeSort(array):
     if len(array) > 1:
@@ -40,21 +41,20 @@ def mergeSort(array):
 # Print the array
 def printList(array):
     array.reverse() # Descending order
-    dict = {'Buyer, Frequency': array} 
+    newList = [t for t in array if not any(isinstance(n, float) and math.isnan(n) for n in t)]
+    dict = {'Buyer, Frequency': newList} 
     df = pd.DataFrame(dict)
     df.to_csv('Buyer1.csv')
     
     
-    
+#main function
 if __name__ == '__main__':
     df = pd.read_csv("./datasets/nft_dataset.csv")
 
     #converting the column to list
     outputset = df.Buyer.values.tolist()
     
-    
-    
-    newset = df.values.tolist()
+    # newset = df.values.tolist()
 
     #getting the frequency for the Buyer
     freq = {}
@@ -64,50 +64,32 @@ if __name__ == '__main__':
             
         else:
             freq[i] = 1
-    
-    # out = dict(itertools.islice(freq.items(), 100)) 
 
-    # print("{" + "\n".join("{!r}: {!r},".format(k, v) for k, v in out.items()) + "}")
-
-    
-    # print(freq)
-    newarray = []
+    #convertung the dict to list for sorting
     array = list(freq.items())
     print(type(df))
     start = time.time()
-    print("hello")
+    print("Sorting Started")
     mergeSort(array)
     end = time.time()
-    print(end - start, "Seconds")
+    print("Sorting Completed in", end - start, "Seconds")
+
+    #Printing the data
     printList(array)
-    # csvdataset = df.values.tolist()
-    print(len(array))
-    newlist = []
-    with open('Buyer2.csv', mode = 'w', newline='') as csv_file:  
-        csv_writer = csv.writer(csv_file)
-        df['Frequency'] = pd.Series(dtype='int')
-        csv_writer.writerow(df.head())
-        for i in range(len(array)):
-            # for j in range(array[i][1]):
-            # print(df.loc[df["Buyer"] == array[i][0]])
-            ot = df.loc[df["Buyer"] == array[i][0]]
-            # ot["new"] = array[i][1]
-            # print(ot)
-            ot["Frequency"] = array[i][1]
-            # newlist.append(ot.values.tolist())
-            # print(newlist)
-            # print(ot)
-            for j in ot.values.tolist():
-                csv_writer.writerows([j])
-            # newlist.append(ot.values.tolist())
-            # print(len(newlist))
-        # print(len(newlist))
-            # ot.to_csv('Buyer2.csv')
-    # print(len(newlist[0]))
-                
-            
-    # array.insert(0,(array[0][0], array[0][1], "hell0"))
-    # print(array[0])
-    # print(type(array), type(array[0]), type(array[0][0]))
-    # print(df['Buyer'].value_counts().reset_index())
+
+    #writing the data to CSV
+    start = time.time()
+    print("Writing to File Operation Started")
+    with pd.option_context('mode.chained_assignment', None):
+        with open('Buyer2.csv', mode = 'w', newline='') as csv_file:  
+            csv_writer = csv.writer(csv_file)
+            df['Frequency'] = pd.Series(dtype='int')
+            csv_writer.writerow(df.head())
+            for i in range(len(array)):
+                ot = df.loc[df["Buyer"] == array[i][0]]
+                ot["Frequency"] = array[i][1]
+                for j in ot.values.tolist():
+                    csv_writer.writerows([j])
+    end = time.time()
+    print("Writing Completed in"," ", end - start, "Seconds")
     
