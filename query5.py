@@ -1,8 +1,9 @@
-
-
 import pandas as pd
 import time
+import matplotlib.pyplot as plt
 import numpy as np
+import random
+
 def print_header(header):
    
     print(f'{header}')
@@ -101,10 +102,26 @@ def mergeSort_col2(myList, col):
             k += 1
 
 
+def gather_runtimes(num_runs):
+    runtimes = []
+    for input_size in range(0, 92000, 1000):
+        average_runtime = 0
+        
+        for i in range(num_runs):
+            start = time.time()
+            mergeSort(final_buyer_list[:input_size], 1)
+            mergeSort_col2(final_buyer_list[:input_size], 1)
+            end = time.time()
+            average_runtime += (end-start)
+            # average_runtime = average_runtime * 10**9
+            random.shuffle(final_buyer_list)
+        average_runtime /= num_runs
+        runtimes.append(average_runtime)
+    return runtimes
 
 if __name__ == '__main__':
     print_header('Reading the data')
-    nft_data = pd.read_csv("nft_dataset.csv")
+    nft_data = pd.read_csv("datasets/nft_dataset.csv")
     nft_data.info()
     print_header('Removing null values from data')
     print(nft_data.isna().sum())
@@ -136,5 +153,11 @@ if __name__ == '__main__':
     print_header("Exporting the output into csv file")
     sorted_buyer_data.to_csv('sorted_buyer_dataset.csv')
 
+    runtimes = gather_runtimes(1)
+    input_intervals = np.arange(1000, 93000, 1000)
 
-
+    plt.plot(input_intervals, runtimes)
+    plt.xlabel("Input Size")
+    plt.ylabel("Runtime (Seconds)")
+    plt.show()
+    
