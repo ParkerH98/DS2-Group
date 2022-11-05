@@ -37,7 +37,6 @@ x_axis=[]
 for j in range(1,total_datapoints+1):
   x_axis.append(j*int((total_records/total_datapoints)))
 
-print(x_axis)
 
 import matplotlib.pyplot as plt
 import numpy as np
