@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 public class Query1 {
-     static String input_path;
+     static String input_path = "./";
      static String merged_path = "./Quey1_merged.csv";
      //static String graph_data = "/Users/dileepdomakonda/Documents/DS2/graph_data";
      static String output_path = "./";
@@ -12,6 +12,7 @@ public class Query1 {
         File dir = new File(input_path);
         Writer pw = new FileWriter(merged_path, false);
         String[] fileNames = dir.list();
+
         int c = 0;
         for (String fileName : fileNames) {
             //System.out.println("Reading from " + fileName);
@@ -147,37 +148,52 @@ public class Query1 {
     private static HashMap<String, NFTTracker> loadData() throws IOException {
 
         HashMap<String, NFTTracker> map = new HashMap<>();
-        Scanner sc = new Scanner(new FileReader(merged_path));
+
         //String line = sc.nextLine();
+        File dir = new File(input_path);
+        String[] fileNames = dir.list();
 
-        while (sc.hasNextLine()) {
-            //if(interval == 0)
-               // break;
-            String line = sc.nextLine();
-            String words[] = line.split("\",\"");
-            words[0] = words[0].substring(1); // remove first character of first string
-            words[words.length - 1] = words[words.length - 1].substring(0, words[words.length - 1].length() - 1); // remove last character of last string
+        for (String fileName : fileNames) {
+            if(!fileName.contains("csv"))
+                continue;
 
-            NFTTracker nftTracker = setNftTracker(words);
+            File f = new File(dir, fileName);
+            Scanner sc = new Scanner(new FileReader(f));
+            //pw.println("Contents of file " + fileName);
+            //String line = br.readLine();
+            while (sc.hasNextLine()) {
+                //if(interval == 0)
+                // break;
+                String line = sc.nextLine();
 
-            if (!map.containsKey(nftTracker.getToken_ID())) {
-                map.put(nftTracker.getToken_ID(), nftTracker);
-            } else {
-                NFTTracker nftTrackerStored = map.get(nftTracker.getToken_ID());
-                nftTrackerStored.getTxn_Hash().addAll(nftTracker.getTxn_Hash());
-                nftTrackerStored.getUnixTimestamp().addAll(nftTracker.getUnixTimestamp());
-                nftTrackerStored.getDate_Time().addAll(nftTracker.getDate_Time());
-                nftTrackerStored.getAction().addAll(nftTracker.getAction());
-                nftTrackerStored.getBuyer().addAll(nftTracker.getBuyer());
-                nftTrackerStored.getNFT().addAll(nftTracker.getNFT());
-                nftTrackerStored.getType().addAll(nftTracker.getType());
-                nftTrackerStored.getQuantity().addAll(nftTracker.getQuantity());
-                nftTrackerStored.getPrice().addAll(nftTracker.getPrice());
-                nftTrackerStored.getMarket().addAll(nftTracker.getMarket());
-                nftTrackerStored.setNoOfTransactions(nftTrackerStored.getNoOfTransactions() + 1);
+                if (line.contains("Txn Hash"))
+                    continue;
+
+                String words[] = line.split("\",\"");
+                words[0] = words[0].substring(1); // remove first character of first string
+                words[words.length - 1] = words[words.length - 1].substring(0, words[words.length - 1].length() - 1); // remove last character of last string
+
+                NFTTracker nftTracker = setNftTracker(words);
+
+                if (!map.containsKey(nftTracker.getToken_ID())) {
+                    map.put(nftTracker.getToken_ID(), nftTracker);
+                } else {
+                    NFTTracker nftTrackerStored = map.get(nftTracker.getToken_ID());
+                    nftTrackerStored.getTxn_Hash().addAll(nftTracker.getTxn_Hash());
+                    nftTrackerStored.getUnixTimestamp().addAll(nftTracker.getUnixTimestamp());
+                    nftTrackerStored.getDate_Time().addAll(nftTracker.getDate_Time());
+                    nftTrackerStored.getAction().addAll(nftTracker.getAction());
+                    nftTrackerStored.getBuyer().addAll(nftTracker.getBuyer());
+                    nftTrackerStored.getNFT().addAll(nftTracker.getNFT());
+                    nftTrackerStored.getType().addAll(nftTracker.getType());
+                    nftTrackerStored.getQuantity().addAll(nftTracker.getQuantity());
+                    nftTrackerStored.getPrice().addAll(nftTracker.getPrice());
+                    nftTrackerStored.getMarket().addAll(nftTracker.getMarket());
+                    nftTrackerStored.setNoOfTransactions(nftTrackerStored.getNoOfTransactions() + 1);
+                }
+                //interval--;
+                //line = sc.nextLine();
             }
-            //interval--;
-            //line = sc.nextLine();
         }
         return map;
     }
@@ -187,12 +203,12 @@ public class Query1 {
         //System.out.println(args[0]);
         //System.out.println(args[1]);
 
-        if (args.length < 1) {
+        /*if (args.length < 1) {
             System.out.println("Insufficent arguments.. Please provide Input Directory path");
             System.exit(0);
         }
-        input_path = args[0];
-        mergeFiles();
+        input_path = args[0];*/
+        //mergeFiles();
 
 
 
