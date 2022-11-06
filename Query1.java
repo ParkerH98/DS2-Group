@@ -203,11 +203,10 @@ public class Query1 {
         //System.out.println(args[0]);
         //System.out.println(args[1]);
 
-        /*if (args.length < 1) {
-            System.out.println("Insufficent arguments.. Please provide Input Directory path");
-            System.exit(0);
+        if (args.length == 1) {
+            input_path = args[0];
         }
-        input_path = args[0];*/
+
         //mergeFiles();
 
 
@@ -298,7 +297,7 @@ public class Query1 {
         Writer radixWriter = new FileWriter(radixdataoutput, false);
         String prev = null;
         quickWriter.write("Token ID : Txn Hash,Date Time (UTC),Buyer,NFT,Type,Quantity,Price\n\n");
-        for(int i = 0; i < nftTrackerList_quicksort.size() - 1; i++) {
+        for(int i = 0; i < nftTrackerList_quicksort.size(); i++) {
             NFTTracker curr = nftTrackerList_quicksort.get(i);
             if(prev == null || !prev.equals(curr.getToken_ID())) {
                 quickWriter.write("\n");
@@ -340,5 +339,260 @@ public class Query1 {
 
         }
         System.out.println("Output saved to current directory " + quickdataoutput + "  and  " + radixdataoutput);
+    }
+}
+
+class Radix {
+    static int getMax(int arr[], int n) {
+        int mx = arr[0];
+        for (int i = 1; i < n; i++)
+            if (arr[i] > mx)
+                mx = arr[i];
+        return mx;
+    }
+
+    static void countSort(int arr[], int n, int exp, List<NFTTracker> nftTrackerList) {
+        int output[] = new int[n];
+        NFTTracker[] nftTrackersOutput = new NFTTracker[n];
+        int i;
+        int count[] = new int[10];
+        Arrays.fill(count, 0);
+        for (i = 0; i < n; i++)
+            count[(arr[i] / exp) % 10]++;
+
+        for (i = 1; i < 10; i++)
+            count[i] += count[i - 1];
+
+        for (i = n - 1; i >= 0; i--) {
+            output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+            nftTrackersOutput[count[(arr[i] / exp) % 10] - 1] = nftTrackerList.get(i);
+            count[(arr[i] / exp) % 10]--;
+        }
+        nftTrackerList.clear();
+
+        for (i = 0; i < n; i++) {
+            arr[i] = output[i];
+            nftTrackerList.add(nftTrackersOutput[i]);
+        }
+    }
+
+    static void radixsort(int arr[], int n, List<NFTTracker> nftTrackerList) {
+        int m = getMax(arr, n);
+
+        for (int exp = 1; m / exp > 0; exp *= 10)
+            countSort(arr, n, exp, nftTrackerList);
+    }
+
+
+    public List<NFTTracker> start(List<NFTTracker> nftTrackerList) {
+        int n = nftTrackerList.size();
+        int arr[] = new int[n];
+
+        for(int i = 0; i < n; i++) {
+            arr[i] = nftTrackerList.get(i).getNoOfTransactions();
+        }
+
+        radixsort(arr, n, nftTrackerList);
+        return nftTrackerList;
+    }
+}
+
+class QuickSort {
+
+    static void swap(int[] arr, int i, int j, NFTTracker[] nftTrackers) {
+        NFTTracker nftTrackerTemp = nftTrackers[i];
+        int temp = arr[i];
+        nftTrackers[i] = nftTrackers[j];
+        arr[i] = arr[j];
+        nftTrackers[j] = nftTrackerTemp;
+        arr[j] = temp;
+    }
+
+    static int partition(int[] arr, int low, int high, NFTTracker[] nftTrackers) {
+
+        int pivot = arr[high];
+
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+
+            if (arr[j] < pivot) {
+                i++;
+                swap(arr, i, j, nftTrackers);
+            }
+        }
+        swap(arr, i + 1, high, nftTrackers);
+        return (i + 1);
+    }
+
+    static void quickSort(int[] arr, int low, int high, NFTTracker[] nftTrackers) {
+        if (low < high) {
+            int pi = partition(arr, low, high, nftTrackers);
+            quickSort(arr, low, pi - 1, nftTrackers);
+            quickSort(arr, pi + 1, high, nftTrackers);
+        }
+    }
+
+
+    // Driver Code
+    public static List<NFTTracker> start(List<NFTTracker> nftTrackerList) {
+        List<NFTTracker> nftTrackerListOutput = new ArrayList<>();
+        int n = nftTrackerList.size();
+        int[] arr = new int[n];
+        NFTTracker[] nftTrackerOutput = new NFTTracker[n];
+        for(int i = 0; i < n; i++) {
+            arr[i] = nftTrackerList.get(i).getNoOfTransactions();
+            nftTrackerOutput[i] = nftTrackerList.get(i);
+        }
+
+        quickSort(arr, 0, n - 1, nftTrackerOutput);
+        for(int i = n - 1; i >= 0; i--)
+            nftTrackerListOutput.add(nftTrackerOutput[i]);
+        return nftTrackerListOutput;
+    }
+}
+
+class NFTTracker {
+
+    private List<String> Txn_Hash,  UnixTimestamp, Date_Time, Action, Buyer, NFT, Type, Quantity, Price, Market;
+    private String  Token_ID;
+
+    private int noOfTransactions;
+    public NFTTracker() {
+    }
+    public NFTTracker(List<String> Txn_Hash, List<String>  UnixTimestamp,
+                      List<String>  Date_Time, List<String>  Action, List<String>  Buyer, List<String>  NFT,
+                      String Token_ID, List<String>  Type, List<String>  Quantity, List<String>  Price,
+                      List<String>  Market) {
+        this.Txn_Hash = Txn_Hash;
+        this.UnixTimestamp = UnixTimestamp;
+        this.Date_Time = Date_Time;
+        this.Action = Action;
+        this.Buyer = Buyer;
+        this.NFT = NFT;
+        this.Token_ID = Token_ID;
+        this.Type = Type;
+        this.Quantity = Quantity;
+        this.Price = Price;
+        this.Market = Market;
+    }
+
+    public List<String> getTxn_Hash() {
+        return Txn_Hash;
+    }
+
+    public void setTxn_Hash(List<String> txn_Hash) {
+        Txn_Hash = txn_Hash;
+    }
+
+    public List<String> getUnixTimestamp() {
+        return UnixTimestamp;
+    }
+
+    public void setUnixTimestamp(List<String> unixTimestamp) {
+        UnixTimestamp = unixTimestamp;
+    }
+
+    public List<String> getDate_Time() {
+        return Date_Time;
+    }
+
+    public void setDate_Time(List<String> date_Time) {
+        Date_Time = date_Time;
+    }
+
+    @Override
+    public String toString() {
+        return Token_ID +" :" + Txn_Hash +"," +
+                Date_Time + "," + Buyer + "," +
+                NFT + "," + Type + "," + Quantity +
+                "," + Price;
+    }
+    /*public String toString() {
+        return "NFTTracker{" +
+                "Txn_Hash=" + Txn_Hash +
+                ", UnixTimestamp=" + UnixTimestamp +
+                ", Date_Time=" + Date_Time +
+                ", Action=" + Action +
+                ", Buyer=" + Buyer +
+                ", NFT=" + NFT +
+                ", Type=" + Type +
+                ", Quantity=" + Quantity +
+                ", Price=" + Price +
+                ", Market=" + Market +
+                ", Token_ID='" + Token_ID + '\'' +
+                ", noOfTransactions=" + noOfTransactions +
+                '}';
+    }*/
+
+    public List<String> getAction() {
+        return Action;
+    }
+
+    public void setAction(List<String> action) {
+        Action = action;
+    }
+
+    public List<String> getBuyer() {
+        return Buyer;
+    }
+
+    public void setBuyer(List<String> buyer) {
+        Buyer = buyer;
+    }
+
+    public List<String> getNFT() {
+        return NFT;
+    }
+
+    public void setNFT(List<String> NFT) {
+        this.NFT = NFT;
+    }
+
+    public List<String> getType() {
+        return Type;
+    }
+
+    public void setType(List<String> type) {
+        Type = type;
+    }
+
+    public List<String> getQuantity() {
+        return Quantity;
+    }
+
+    public void setQuantity(List<String> quantity) {
+        Quantity = quantity;
+    }
+
+    public List<String> getPrice() {
+        return Price;
+    }
+
+    public void setPrice(List<String> price) {
+        Price = price;
+    }
+
+    public List<String> getMarket() {
+        return Market;
+    }
+
+    public void setMarket(List<String> market) {
+        Market = market;
+    }
+
+    public String getToken_ID() {
+        return Token_ID;
+    }
+
+    public void setToken_ID(String token_ID) {
+        Token_ID = token_ID;
+    }
+    public int getNoOfTransactions() {
+        return noOfTransactions;
+    }
+
+    public void setNoOfTransactions(int noOfTransactions) {
+        this.noOfTransactions = noOfTransactions;
     }
 }
