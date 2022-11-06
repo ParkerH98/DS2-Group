@@ -15,7 +15,7 @@ public class Query1 {
         int c = 0;
         for (String fileName : fileNames) {
             //System.out.println("Reading from " + fileName);
-            if(!fileName.contains("csv"))
+            if(!fileName.contains("csv") || fileName.equals(merged_path))
                 continue;
 
             File f = new File(dir, fileName);
