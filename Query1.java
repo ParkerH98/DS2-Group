@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Query1 {
      static String input_path;
-     static String merged_path = "./merged.csv";
+     static String merged_path = "./Quey1_merged.csv";
      //static String graph_data = "/Users/dileepdomakonda/Documents/DS2/graph_data";
      static String output_path = "./";
      static Long no_of_records = Long.valueOf(0);
@@ -187,8 +187,11 @@ public class Query1 {
         //System.out.println(args[0]);
         //System.out.println(args[1]);
 
-
-        input_path = args[1];
+        if (args.length < 1) {
+            System.out.println("Insufficent arguments.. Please provide Input Directory path");
+            System.exit(0);
+        }
+        input_path = args[0];
         mergeFiles();
 
 
@@ -273,8 +276,8 @@ public class Query1 {
     }
     private static void writeOutputPath(List<NFTTracker> nftTrackerList_quicksort, List<NFTTracker> nftTrackerList_radix) throws IOException {
 
-        String quickdataoutput = output_path + "quicksortoutput.csv";
-        String radixdataoutput = output_path + "radixsortoutput.csv";
+        String quickdataoutput = output_path + "Query1_quicksortoutput.csv";
+        String radixdataoutput = output_path + "Query1_radixsortoutput.csv";
         Writer quickWriter = new FileWriter(quickdataoutput, false);
         Writer radixWriter = new FileWriter(radixdataoutput, false);
         String prev = null;

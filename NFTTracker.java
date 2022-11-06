@@ -50,6 +50,12 @@ public class NFTTracker {
 
     @Override
     public String toString() {
+        return Token_ID +" :" + Txn_Hash +"," +
+                Date_Time + "," + Buyer + "," +
+                NFT + "," + Type + "," + Quantity +
+                "," + Price;
+    }
+    /*public String toString() {
         return "NFTTracker{" +
                 "Txn_Hash=" + Txn_Hash +
                 ", UnixTimestamp=" + UnixTimestamp +
@@ -64,7 +70,7 @@ public class NFTTracker {
                 ", Token_ID='" + Token_ID + '\'' +
                 ", noOfTransactions=" + noOfTransactions +
                 '}';
-    }
+    }*/
 
     public List<String> getAction() {
         return Action;
