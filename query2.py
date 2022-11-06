@@ -162,7 +162,7 @@ def mergeSort(arr,attr,isAsc = True):
      return merged_arr
 
 #read the csv file
-tran_list = readCSV("./datasets/nft_dataset.csv")
+tran_list = readCSV('nft_dataset.txt')
 
 # modify some attributes like Price and Quantity
 tran_list = modifyList(tran_list)
@@ -174,7 +174,6 @@ avg_price_sorted_list = mergeSort(tonek_list,'Price',isAsc = False)
 """for elem in avg_price_sorted_list :
      printItem(elem)"""
 writeCSV("query1_output.csv",avg_price_sorted_list)
-
 
 
 
