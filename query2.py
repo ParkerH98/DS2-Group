@@ -22,7 +22,7 @@ def writeCSV(filename,data):
      fields = list(data[0].keys())
      rows = [list(elem.values()) for elem in data]
      for elem in data:
-      elem['Price']=format(elem['Price'],'f')
+      elem['Price']=format(elem['Price'],'f')+"\t"
      # writing to csv file 
      with open(filename, 'w') as csvfile: 
          # creating a csv writer object 
