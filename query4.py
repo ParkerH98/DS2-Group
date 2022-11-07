@@ -1,7 +1,7 @@
 # CS 5413 Assignment
 # Algorithms for NFT Transaction Data Analytics
 # Query 4: Sort down “Token ID’s” by the number of different buyers (“Buyer”).
-import pip
+
 import pandas as pd
 import math
 import copy
@@ -20,18 +20,27 @@ with open("./datasets/nft_dataset.csv") as fp:
 # Converting the data into dictonary for counting number of buyers
 #Ex: {'tokenID': noOfBuyers}
 dictonary = {}
+buyer_dic = {}
 
 # looping through all the data once skipping first record(header)
 for i in range(1, len(data)):
-    # Extract token ID
+    # Extract token ID and buyer
+    buyer = data[i][4]
     tokenID = data[i][6]
     
-    # If token id exists increase buyer count by 1
-    # Else add a new dictonary entry
+    # If token id exists and it is a new buyer then increase token ID's buyer count by 1
+    # If token ID is not new then add the new buyer to the token IDs buyer array
     if tokenID in dictonary:
-        dictonary[tokenID] += 1
+        if not buyer in buyer_dic[tokenID]:
+            buyer_dic[tokenID].append(buyer)
+            dictonary[tokenID] += 1
+
+    # Else if token ID is new add a new dictonary entry for the token ID 
     else:
+        buyer_array = []
+        buyer_array.append(buyer)
         dictonary[tokenID] = 1
+        buyer_dic[tokenID] = buyer_array
 
 # Adding our new found num of buyer values to original data in list format so we can quick sort on it
 # Example [{'Token ID': 648, 'Number of Buyers': 3}, {'Token ID': 123, 'Number of Buyers': 6}]
