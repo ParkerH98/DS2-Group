@@ -58,7 +58,7 @@ def modifyList(list1):
           elif(pr[1]=='ASH'):
                price = price*0.9406
           elif(pr[1]=='TATR'):
-               price = price*0.0122056
+               price = price*0.012056
           elif(pr[1]=='USDC'):
                price = price*1.0
           elif(pr[1]=='MANA'):
@@ -198,7 +198,7 @@ avg_price_sorted_list = mergeSort(tonek_list,'Price',isAsc = False)
 
 
 writeCSV("query2_output.csv",avg_price_sorted_list)
-Print("The output for the query is written in csv file named as query2_output.csv and will be generated in the same directory ")
+print("The output for the query is written in csv file named as query2_output.csv and will be generated in the same directory ")
 
 
 
