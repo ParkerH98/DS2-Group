@@ -19,11 +19,12 @@ def writeCSV(filename,data):
      '''save the data in .csv file
      Params : filename of the csv file
      data is list of dictionaries of each entry'''
-     fields = list(data[0].keys())
-     rows = [list(elem.values()) for elem in data]
+     
      for elem in data:
       elem['Price']=format(elem['Price'],'f')+"\t"
-      elem['Token ID']=format(elem['Token ID'],'f')+"\t"
+     fields = list(data[0].keys())
+     rows = [list(elem.values()) for elem in data]
+     
      # writing to csv file 
      with open(filename, 'w') as csvfile: 
          # creating a csv writer object 
