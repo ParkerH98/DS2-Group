@@ -170,9 +170,9 @@ tran_list = readCSV('nft_dataset.txt')
 tran_list = modifyList(tran_list)
 
 #query 
-tonken_list = groupByTokenID(tran_list)
+token_list = groupByTokenID(tran_list)
 
-avg_price_sorted_list = mergeSort(tonken_list,'Price',isAsc = False)
+avg_price_sorted_list = mergeSort(token_list,'Price',isAsc = False)
 """for elem in avg_price_sorted_list :
      printItem(elem)"""
 
