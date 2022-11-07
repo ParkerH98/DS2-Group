@@ -1,6 +1,8 @@
 # CS 5413 Assignment
 # Algorithms for NFT Transaction Data Analytics
 # Query 4: Sort down “Token ID’s” by the number of different buyers (“Buyer”).
+import pip
+import pandas as pd
 import math
 import copy
 import sys
@@ -10,9 +12,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Getting the data from file using csv module
-with open("./nft_dataset_small.csv") as fp:
+with open("./datasets/nft_dataset.csv") as fp:
     reader = csv.reader(fp, delimiter=",", quotechar='"')
     data = [row for row in reader]
+
 
 # Converting the data into dictonary for counting number of buyers
 #Ex: {'tokenID': noOfBuyers}
@@ -22,7 +25,7 @@ dictonary = {}
 for i in range(1, len(data)):
     # Extract token ID
     tokenID = data[i][6]
-    buyer = data[i][4]
+    
     # If token id exists increase buyer count by 1
     # Else add a new dictonary entry
     if tokenID in dictonary:
@@ -36,7 +39,18 @@ listOfDictionaries = []
 
 for i in range(1, len(data)):
     tokenID = data[i][6]
-    temp = {'Token ID': tokenID, 'Number of Buyers': dictonary[tokenID]}
+    txnHash = data[i][0]
+    unixTimestamp = data[i][1]
+    dateTime = data[i][2]
+    action = data[i][3]
+    buyer = data[i][4]
+    nft = data[i][5]
+    nType = data[i][7]
+    quantity = data[i][8]
+    price = data[i][9]
+    market = data[i][10]
+    
+    temp = {'Token ID': tokenID, 'Number of Buyers': dictonary[tokenID], 'Txn Hash': txnHash , 'UnixTimestamp': unixTimestamp, 'Date Time (UTC)': dateTime, 'Action': action, 'Buyer': buyer, 'NFT': nft, 'Type': nType, 'Quantity': quantity, 'Price': price, 'Market': market}
     listOfDictionaries.append(temp)
 
 # storing totalNumberOfRecords to prevent re calculation
@@ -46,8 +60,6 @@ totalRecords = len(listOfDictionaries)
 
 # This is the naive approach which uses extra memory by creating new arrays in every recursive call
 # But using the extra memory we are guaranteed quick sorts best time of nlogn
-# Clocked at roughly 20s on a macbook pro for 92000 records
-
 
 def quickSortNSpace(list, sortingField):
     # we return when the list length is 1 or less
@@ -59,7 +71,7 @@ def quickSortNSpace(list, sortingField):
         leftList = []
         rightList = []
 
-        # if item is leff than or eual add to the left list
+        # if item is less than or equal, add to the left list
         # else add to the right list
         for item in list:
             if item[sortingField] <= pivot[sortingField]:
@@ -72,7 +84,6 @@ def quickSortNSpace(list, sortingField):
 
 # This is less space edition of quick sort.
 # It doesn't create any new arrays instead swaps items around in the same list
-# Clocked around 34s on macbook pro for 92000 records
 
 def quickSortLogNSpace(list, left, right, sortingField):
     # this condition will stop recursive call after all swaps
@@ -99,60 +110,49 @@ def quickSortLogNSpace(list, left, right, sortingField):
 # increasing the default pythons recursion limit for large inputs
 sys.setrecursionlimit(10**6)
 
-copy1ofRecords = copy.deepcopy(listOfDictionaries)
-copy2ofRecords = copy.deepcopy(listOfDictionaries)
-copy3ofRecords = copy.deepcopy(listOfDictionaries)
-
-print(len(listOfDictionaries))
-start_time = time.time()
-# Quick Sorting
-quickSortNSpace(copy1ofRecords, 'Number of Buyers')
-# record end time
-end_time = time.time()
-# Check time taken
-total_time = end_time-start_time
-print(total_time)
-
-print(len(listOfDictionaries))
-start_time = time.time()
-# Quick Sorting
-quickSortLogNSpace(copy2ofRecords, 0, totalRecords-1, 'Number of Buyers')
-# record end time
-end_time = time.time()
-# Check time taken
-total_time = end_time-start_time
-print(total_time)
-
-
-# using a list to record 100 run time numbers
 runTimes = []
-asymptomaticTime = []
-recordCount = []
-count = 0
-for i in range(0, 99):
-    copyOfRecords = copy.deepcopy(copy3ofRecords)
-    count += 1
-    # record the start time before sorting
-    start_time = time.time()
-    # Quick Sorting
-    quickSortLogNSpace(copyOfRecords, 0, totalRecords-1, 'Number of Buyers')
-    # record end time
-    end_time = time.time()
-    # Check time taken
-    total_time = end_time-start_time
-    # push to run times list seconds*1000000000 nanoseconds
-    runTimes.append(total_time*1000000000)
-    # push to asymptomatic time n * log(n) base 2
-    asymptomaticTime.append(totalRecords*math.log(totalRecords, 2))
-    # increasing record count
-    recordCount.append(count)
-    del copyOfRecords
+n=1000
+i=0
 
-# calculating average
-averageTime = sum(runTimes)/len(runTimes)
+def calculateAvgerageTime(arrayToSort):
+    totalTimes = []
+    for i in range(0,100):
+        # record the start time before sorting
+        start_time = time.time()
+        # Quick Sorting
+        quickSortLogNSpace(arrayToSort, 0, len(arrayToSort)-1, 'Number of Buyers')
+        # record end time
+        end_time = time.time()
+        # Check time taken
+        total_time = end_time-start_time
+        totalTimes.append(total_time)
+    avgTime = sum(totalTimes)/100
+    return avgTime
 
-# plotting a graph with calculated times
-#plt.plot(recordCount, asymptomaticTime, label='Asymptomatic Times')
-plt.plot(recordCount, runTimes, label='Actual Run Times')
-plt.legend()
+for i in range(0, len(listOfDictionaries)):
+    if i == n or i == len(listOfDictionaries)-1:
+        copyOfRecords = []
+        for j in range(0, i):
+            copyOfRecords.append(listOfDictionaries[j])
+        timeTaken = calculateAvgerageTime(copyOfRecords)
+        # push to run times list seconds*1000000000 nanoseconds
+        runTimes.append(timeTaken)
+        #deleting our array of records
+        del copyOfRecords
+        n += 1000
+
+print(runTimes)
+
+quickSortLogNSpace(listOfDictionaries, 0, totalRecords-1, 'Number of Buyers')
+wtr = csv.writer(open ('query4_sorted.csv', 'w'), delimiter=',', lineterminator='\n')
+for x in listOfDictionaries : wtr.writerow ([x])
+
+pltTime = np.array(runTimes)
+max_len = round(len(listOfDictionaries) / 1000) * 1000
+print(max_len)
+input_intervals = np.arange(1000, max_len + 1000, 1000)
+print(input_intervals)
+plt.plot(input_intervals, pltTime, marker = "o", color = "b")
+plt.xlabel("Input Size")
+plt.ylabel("Runtime (ns)")
 plt.show()
