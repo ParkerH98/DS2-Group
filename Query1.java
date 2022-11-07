@@ -156,7 +156,7 @@ public class Query1 {
         String[] fileNames = dir.list();
 
         for (String fileName : fileNames) {
-            if(!fileName.contains("csv")) //reads the files with extension .csv
+            if(!fileName.endsWith(".csv")) //reads the files with extension .csv
                 continue;
             //reads the file by file
             File f = new File(dir, fileName);
