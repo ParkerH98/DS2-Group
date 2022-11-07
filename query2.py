@@ -107,28 +107,6 @@ def groupByTokenID(list1):
 
      return list(dic.values())
 
-def groupByBuyer(list1):
-     '''Group the entries by Buyer and calculate frequency of each buyer
-     Returns : list of grouped data
-     Params : list of entries'''
-     def add(dic, elem):
-          b_id = elem['Buyer']
-          if b_id not in dic:
-               elem['Frequency'] = 1
-               dic[b_id] = elem
-          else:
-               elem_old = dic[b_id]
-               elem_old['Frequency'] = elem_old['Frequency'] + 1
-               dic[b_id] = elem_old
-
-          return dic
-
-     dic = dict()
-     for elem in list1:
-          dic = add(dic,elem)
-
-     return list(dic.values())
-
 def printItem(item):
      #print the keys and values of a single entry
      msg = ""
