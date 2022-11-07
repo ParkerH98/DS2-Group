@@ -21,6 +21,8 @@ def writeCSV(filename,data):
      data is list of dictionaries of each entry'''
      fields = list(data[0].keys())
      rows = [list(elem.values()) for elem in data]
+     for elem in data:
+      elem['Price']=format(elem['Price'],'f')
      # writing to csv file 
      with open(filename, 'w') as csvfile: 
          # creating a csv writer object 
@@ -31,7 +33,7 @@ def writeCSV(filename,data):
              
          # writing the data rows 
          csvwriter.writerows(rows)
-
+     
 """def modifyList(list1):
      def modify(item):
           item['Price'] = float(item['Price'].split(' ')[0])
@@ -103,7 +105,27 @@ def groupByTokenID(list1):
 
      return list(dic.values())
 
+def groupByBuyer(list1):
+     '''Group the entries by Buyer and calculate frequency of each buyer
+     Returns : list of grouped data
+     Params : list of entries'''
+     def add(dic, elem):
+          b_id = elem['Buyer']
+          if b_id not in dic:
+               elem['Frequency'] = 1
+               dic[b_id] = elem
+          else:
+               elem_old = dic[b_id]
+               elem_old['Frequency'] = elem_old['Frequency'] + 1
+               dic[b_id] = elem_old
 
+          return dic
+
+     dic = dict()
+     for elem in list1:
+          dic = add(dic,elem)
+
+     return list(dic.values())
 
 def printItem(item):
      #print the keys and values of a single entry
@@ -167,13 +189,16 @@ tran_list = readCSV('nft_dataset.txt')
 # modify some attributes like Price and Quantity
 tran_list = modifyList(tran_list)
 
-#query 1
+#query 
 tonek_list = groupByTokenID(tran_list)
 
 avg_price_sorted_list = mergeSort(tonek_list,'Price',isAsc = False)
 """for elem in avg_price_sorted_list :
      printItem(elem)"""
-writeCSV("query1_output.csv",avg_price_sorted_list)
+
+
+writeCSV("query2_output.csv",avg_price_sorted_list)
+Print("The output for the query is written in csv file named as query2_output.csv and will be generated in the same directory ")
 
 
 
@@ -182,13 +207,16 @@ For sorting merge sort is implemented i.e., O(NlogN).
 So in each query, group the data in O(N) time and sort the data in O(NlogN) time complexity.
 Hence the time complexity of each query = O(N) + O(NlogN) = O(NlogN)"""
 
-import time 
+
+#Query to check the run time for  1000 asymptomatic runs
+
+"""import time 
 
 #average time query 1 (over 1000 query 1)
 time1 = time.time()
 for i in range(1000):
-     tonek_list = groupByTokenID(tran_list)
-     avg_price_sorted_list = mergeSort(tonek_list,'Price',isAsc = False)
+   tonek_list = groupByTokenID(tran_list)
+   avg_price_sorted_list = mergeSort(tonek_list,'Price',isAsc = False)
 time2 = time.time()
-print("average time of query 1 over 1000 entries (N = 1000) is = ",(time2-time1)/1000, " seconds")
+print("average time of query 1 over 1000 entries (N = 1000) is = ",(time2-time1)/1000, " seconds")"""
 
