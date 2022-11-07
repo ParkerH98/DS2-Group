@@ -2,7 +2,6 @@
 # Algorithms for NFT Transaction Data Analytics
 # Query 4: Sort down “Token ID’s” by the number of different buyers (“Buyer”).
 
-import pandas as pd
 import math
 import copy
 import sys
@@ -12,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Getting the data from file using csv module
-with open("./datasets/nft_dataset.csv") as fp:
+with open("./nft_dataset.csv") as fp:
     reader = csv.reader(fp, delimiter=",", quotechar='"')
     data = [row for row in reader]
 
@@ -65,56 +64,40 @@ for i in range(1, len(data)):
 # storing totalNumberOfRecords to prevent re calculation
 totalRecords = len(listOfDictionaries)
 
-# Creating our quick sort functions
+# Creating our merge sort functions
 
-# This is the naive approach which uses extra memory by creating new arrays in every recursive call
-# But using the extra memory we are guaranteed quick sorts best time of nlogn
-
-def quickSortNSpace(list, sortingField):
-    # we return when the list length is 1 or less
-    if len(list) <= 1:
-        return list
-    else:
-        # choosing last element as the pivot for our quick sort
-        pivot = list.pop()
-        leftList = []
-        rightList = []
-
-        # if item is less than or equal, add to the left list
-        # else add to the right list
-        for item in list:
-            if item[sortingField] <= pivot[sortingField]:
-                rightList.append(item)
-            else:
-                leftList.append(item)
-        # recursively calling function for smaller lists.
-        return quickSortNSpace(leftList, sortingField) + [pivot] + quickSortNSpace(rightList, sortingField)
-
-
-# This is less space edition of quick sort.
-# It doesn't create any new arrays instead swaps items around in the same list
-
-def quickSortLogNSpace(list, left, right, sortingField):
-    # this condition will stop recursive call after all swaps
-    if left < right:
-        # choosing the last element of our search window as the pivot
-        pivot = list[right]
-
-        # i is tracking the point in the list where all items are less than pivot
-        i = left - 1
-        # j starts one index ahead of i and scans the items
-        for j in range(left, right):
-            # if any items is less than the pivot we swap items at i and j and increment i
-            if list[j][sortingField] <= pivot[sortingField]:
-                i += 1
-                list[i], list[j] = list[j], list[i]
-        # we finally swap the pivot into corrects place right ahead of i
-        list[i + 1], list[right] = list[right], list[i + 1]
-
-        # recursively calling function for smaller lists.
-        quickSortLogNSpace(list, left, i, sortingField)
-        quickSortLogNSpace(list, i+2, right, sortingField)
-
+def mergeSort(listOfItems, sortingField):
+     if len(listOfItems) > 1:
+ 
+         mid = len(listOfItems)//2
+         left_list = listOfItems[:mid]
+         right_list = listOfItems[mid:]
+ 
+         mergeSort(left_list, sortingField)
+         mergeSort(right_list, sortingField)
+ 
+         i = 0
+         j = 0
+         k = 0
+ 
+         while i < len(left_list) and j < len(right_list):
+             if left_list[i][sortingField] < right_list[j][sortingField]:
+                 listOfItems[k] = left_list[i]
+                 i += 1
+             else:
+                 listOfItems[k] = right_list[j]
+                 j += 1
+             k += 1
+ 
+         while i < len(left_list):
+             listOfItems[k] = left_list[i]
+             i += 1
+             k += 1
+ 
+         while j < len(right_list):
+             listOfItems[k] = right_list[j]
+             j += 1
+             k += 1
 
 # increasing the default pythons recursion limit for large inputs
 sys.setrecursionlimit(10**6)
@@ -129,7 +112,7 @@ def calculateAvgerageTime(arrayToSort):
         # record the start time before sorting
         start_time = time.time()
         # Quick Sorting
-        quickSortLogNSpace(arrayToSort, 0, len(arrayToSort)-1, 'Number of Buyers')
+        mergeSort(arrayToSort, 'Number of Buyers')
         # record end time
         end_time = time.time()
         # Check time taken
@@ -152,8 +135,8 @@ for i in range(0, len(listOfDictionaries)):
 
 print(runTimes)
 
-quickSortLogNSpace(listOfDictionaries, 0, totalRecords-1, 'Number of Buyers')
-wtr = csv.writer(open ('query4_sorted.csv', 'w'), delimiter=',', lineterminator='\n')
+mergeSort(listOfDictionaries, 'Number of Buyers')
+wtr = csv.writer(open ('sorted_dataset.csv', 'w'), delimiter=',', lineterminator='\n')
 for x in listOfDictionaries : wtr.writerow ([x])
 
 pltTime = np.array(runTimes)
