@@ -140,11 +140,11 @@ wtr = csv.writer(open ('sorted_dataset.csv', 'w'), delimiter=',', lineterminator
 for x in listOfDictionaries : wtr.writerow ([x])
 
 pltTime = np.array(runTimes)
-max_len = round(len(listOfDictionaries) / 1000) * 1000
-print(max_len)
-input_intervals = np.arange(1000, max_len + 1000, 1000)
+maxLength = round(len(listOfDictionaries) / 1000) * 1000
+print(maxLength)
+input_intervals = np.arange(1000, maxLength + 1000, 1000)
 print(input_intervals)
 plt.plot(input_intervals, pltTime, marker = "o", color = "b")
 plt.xlabel("Input Size")
-plt.ylabel("Runtime (ns)")
+plt.ylabel("Runtime")
 plt.show()
