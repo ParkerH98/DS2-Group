@@ -80,7 +80,6 @@ def modifyList(list1):
           item['Quantity'] = int(item['Quantity'])
           del item['Action']
           del item['Market']
-          del item['File_Name']
           return item
      l = [modify(item) for item in list1]
      return l
