@@ -51,27 +51,28 @@ def modifyList(list1):
           #print(item)
           pr = item['Price'].split(' ')
           price = float(pr[0].replace(',',''))
-          if(pr[1]=='GALA'):
+          if(len(pr)==3):
+           if(pr[1]=='GALA'):
                price = price*0.03748
-          elif(pr[1]=='ETH'):
+           elif(pr[1]=='ETH'):
                price = price*1309.97
-          elif(pr[1]=='WETH'):
+           elif(pr[1]=='WETH'):
                price = price*1322.16
-          elif(pr[1]=='ASH'):
+           elif(pr[1]=='ASH'):
                price = price*0.9406
-          elif(pr[1]=='TATR'):
+           elif(pr[1]=='TATR'):
                price = price*0.012056
-          elif(pr[1]=='USDC'):
+           elif(pr[1]=='USDC'):
                price = price*1.0
-          elif(pr[1]=='MANA'):
+           elif(pr[1]=='MANA'):
                price = price*0.64205
-          elif(pr[1]=='SAND'):
+           elif(pr[1]=='SAND'):
                price = price*0.7919
-          elif(pr[1]=='RARI'):
+           elif(pr[1]=='RARI'):
                price = price*2.18
-          elif(pr[1]=='CTZN'):
+           elif(pr[1]=='CTZN'):
                price = price*0.00321
-          elif(pr[1]=='APE'):
+           elif(pr[1]=='APE'):
                price = price*4.62
           else :
                price = price
